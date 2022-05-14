@@ -1,6 +1,6 @@
 <div align="center">
 
-# schnedlitz.family
+# `schnedlitz.family`
 
 ![Made with vanilla HTML](https://shields.io/badge/Made_with-vanilla_HTML-1433e1?style=for-the-badge&labelColor=000000)
 ![Hosted on GitHub Pages](https://shields.io/badge/Hosted_on-GitHub_Pages-e437b8?style=for-the-badge&labelColor=000000)
