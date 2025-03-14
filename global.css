@@ -2,6 +2,9 @@
 
 :root {
   color-scheme: light dark;
+
+  --bg: #fff;
+  --text: #000;
 }
 
 * {
@@ -29,6 +32,10 @@ html {
   }
 }
 
+body {
+  background: var(--bg);
+}
+
 main {
   overflow: hidden;
 }
@@ -38,10 +45,11 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   margin: 0;
 
   font-size: min(30vh, 40vw);
+
+  color: var(--text);
 }
 
 #h {
@@ -142,4 +150,19 @@ h1 {
   border-radius: 50%;
 
   background: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000;
+    --text: #fff;
+  }
+
+  .blob {
+    background-image: linear-gradient(
+      to bottom,
+      var(--accent--dark) 0%,
+      var(--accent--light) 100%
+    );
+  }
 }
