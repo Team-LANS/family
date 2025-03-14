@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Team LANS</title>
+    <title>The Schnedlitz Family</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
@@ -22,20 +22,20 @@
     />
 
     <!-- social media -->
-    <meta property="og:title" content="Team LANS - The Schnedlitz Family" />
-    <meta name="twitter:title" content="Team LANS - The Schnedlitz Family" />
+    <meta property="og:title" content="The Schnedlitz Family" />
+    <meta name="twitter:title" content="The Schnedlitz Family" />
 
     <meta
       name="description"
-      content="Hi! We are Team LANS 👨🏼‍💻👩🏻‍💻. You might also know us as the Schnedlitz family. Did we mention we both code?"
+      content="Hi! We are Team LANS. You might also know us as the Schnedlitz family. Did we mention we code?"
     />
     <meta
       property="og:description"
-      content="Hi! We are Team LANS 👨🏼‍💻👩🏻‍💻. You might also know us as the Schnedlitz family. Did we mention we both code?"
+      content="Hi! We are Team LANS. You might also know us as the Schnedlitz family. Did we mention we code?"
     />
     <meta
       name="twitter:description"
-      content="Hi! We are Team LANS 👨🏼‍💻👩🏻‍💻. You might also know us as the Schnedlitz family. Did we mention we both code?"
+      content="Hi! We are Team LANS. You might also know us as the Schnedlitz family. Did we mention we code?"
     />
 
     <meta property="og:image" content="https://schnedlitz.family/social.png" />
@@ -48,237 +48,136 @@
     <link crossorigin="use-credentials" href="manifest.json" rel="manifest" />
     <link href="favicon.png" rel="icon" type="image/png" />
     <link href="global.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/97/three.min.js"></script>
-    <script src="https://cdn.rawgit.com/josephg/noisejs/master/perlin.js"></script>
   </head>
   <body>
     <main>
-      <canvas class="scene" id="bubble"></canvas>
-      <h1><span>Team</span><strong>LANS</strong></h1>
+      <h1>Hi.</h1>
+      <div id="h" class="blob">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
+      <div id="l" class="blob">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
+      <div id="a" class="blob">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
     </main>
     <script nonce="7ca12303b39">
       document.body.onload = () => {
-        /* Copied from https://codepen.io/LenaSchnedlitz/pen/OJxjxWe 
-           which is based on this awesome pen: https://codepen.io/supah/pen/BqwJxq */
+        function randomNumber(limit) {
+          return Math.floor(Math.random() * limit);
+        }
 
-        /*-------------------- Setup --------------------*/
-        console.clear();
-        const canvas = document.querySelector("#bubble");
-        let width = canvas.offsetWidth,
-          height = canvas.offsetHeight;
-        const renderer = new THREE.WebGLRenderer({
-          canvas: canvas,
-          antialias: true,
-          alpha: true,
-        });
+        function randomItem(array) {
+          return array[randomNumber(array.length)];
+        }
 
-        const scene = new THREE.Scene();
+        const ALIGNMENTS = {
+          x: ["top", "bottom"],
+          y: ["left", "right"],
+        };
+        const ANCHORS = ["top", "right", "bottom", "left"];
+        const COLOR = randomItem(["r", "g", "b"]);
+        const DIRECTION = {
+          top: ["y", -1],
+          right: ["x", 1],
+          bottom: ["y", 1],
+          left: ["x", -1],
+        };
+        const ROTATION = {
+          top: "180deg",
+          right: "270deg",
+          bottom: "0deg",
+          left: "90deg",
+        };
 
-        const setup = () => {
-          renderer.setPixelRatio(window.devicePixelRatio);
-          renderer.setSize(width, height);
-          renderer.setClearColor(0xf1f2f4, 0);
-          renderer.shadowMap.enabled = true;
-          renderer.shadowMapSoft = true;
+        const filledPositions = new Set();
 
-          scene.fog = new THREE.Fog(0xb9bdca, 10, 200);
+        function findAnEmptyPosition() {
+          let positionFound = false;
+          let positionData = {};
 
-          const aspectRatio = width / height;
-          const fieldOfView = 100;
-          const nearPlane = 0.1;
-          const farPlane = 10000;
-          camera = new THREE.PerspectiveCamera(
-            fieldOfView,
-            aspectRatio,
-            nearPlane,
-            farPlane
+          while (!positionFound) {
+            const anchor = randomItem(ANCHORS);
+            const [direction, sign] = DIRECTION[anchor];
+            const alignment = randomItem(ALIGNMENTS[direction]);
+            const position = anchor;
+
+            if (!filledPositions.has(position)) {
+              positionFound = true;
+              filledPositions.add(position);
+              positionData = {
+                alignment,
+                anchor,
+                translate: `translate${direction}(${42 * sign}%)`,
+              };
+            }
+          }
+          return positionData;
+        }
+
+        const H = document.getElementById("h");
+        const L = document.getElementById("l");
+        const A = document.getElementById("a");
+        [H, L, A].forEach((node) => {
+          // POSITION
+          const { alignment, anchor, translate } = findAnEmptyPosition();
+          node.style.setProperty(anchor, 0);
+          node.style.setProperty(alignment, `${randomNumber(40)}%`);
+          node.style.setProperty(
+            "transform",
+            `${translate} rotate(${ROTATION[anchor]})`
           );
 
-          camera.position.x = 0;
-          camera.position.y = 0;
-          camera.position.z = 160;
-        };
-        setup();
-
-        /*-------------------- Lights --------------------*/
-        let hemispshereLight, shadowLight, light2;
-        const createLights = () => {
-          hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 0.5);
-
-          shadowLight = new THREE.DirectionalLight(0xffffff, 0.4);
-          shadowLight.position.set(0, 450, 350);
-          shadowLight.castShadow = true;
-
-          shadowLight.shadow.camera.left = -650;
-          shadowLight.shadow.camera.right = 650;
-          shadowLight.shadow.camera.top = 650;
-          shadowLight.shadow.camera.bottom = -650;
-          shadowLight.shadow.camera.near = 1;
-          shadowLight.shadow.camera.far = 1000;
-
-          shadowLight.shadow.mapSize.width = 4096;
-          shadowLight.shadow.mapSize.height = 4096;
-
-          light2 = new THREE.DirectionalLight(0xffffff, 0.25);
-          light2.position.set(-600, 350, 350);
-
-          light3 = new THREE.DirectionalLight(0xffffff, 0.15);
-          light3.position.set(0, -250, 300);
-
-          scene.add(hemisphereLight);
-          scene.add(shadowLight);
-          scene.add(light2);
-          scene.add(light3);
-        };
-        createLights();
-
-        /*-------------------- Bubble --------------------*/
-        const vertex = width > 575 ? 80 : 40;
-        const bubbleGeometry = new THREE.SphereGeometry(120, vertex, vertex);
-        let bubble;
-        const createBubble = () => {
-          for (let i = 0; i < bubbleGeometry.vertices.length; i++) {
-            let vector = bubbleGeometry.vertices[i];
-            vector.original = vector.clone();
-          }
-          const bubbleMaterial = new THREE.MeshStandardMaterial({
-            emissive: 0xf1f2f4,
-            emissiveIntensity: 0.5,
-            roughness: 0.61,
-            metalness: 0.21,
-            side: THREE.FrontSide,
-          });
-          bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial);
-          bubble.castShadow = true;
-          bubble.receiveShadow = false;
-          scene.add(bubble);
-        };
-        createBubble();
-
-        /*-------------------- Plane --------------------*/
-        const createPlane = () => {
-          const planeGeometry = new THREE.PlaneBufferGeometry(2000, 2000);
-          const planeMaterial = new THREE.ShadowMaterial({
-            opacity: 0.05,
+          const eyes = [...node.children];
+          eyes.forEach((eye) => {
+            eye.style.setProperty("transform", `rotate(-${ROTATION[anchor]})`);
           });
 
-          const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-          plane.position.y = -150;
-          plane.position.x = 0;
-          plane.position.z = 0;
-          plane.rotation.x = (Math.PI / 180) * -90;
-          plane.receiveShadow = true;
-          scene.add(plane);
-        };
-        createPlane();
-
-        /*-------------------- Map --------------------*/
-        const map = (num, in_min, in_max, out_min, out_max) => {
-          return (
-            ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min
+          // SHAPE TODO
+          node.style.setProperty(
+            "border-radius",
+            "49% 51% 48% 52% / 57% 44% 56% 43%"
           );
-        };
 
-        /*-------------------- Distance --------------------*/
-        const distance = (a, b) => {
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          return d;
-        };
-
-        /*-------------------- Mouse --------------------*/
-        let mouse = new THREE.Vector2(0, 0);
-        const onMouseMove = (e) => {
-          TweenMax.to(mouse, 0.8, {
-            x: e.clientX || e.pageX || e.touches[0].pageX || 0,
-            y: e.clientY || e.pageY || e.touches[0].pageY || 0,
-            ease: Power2.easeOut,
-          });
-        };
-        ["mousemove", "touchmove"].forEach((event) => {
-          window.addEventListener(event, onMouseMove);
+          // THEME
+          node.style.setProperty("--accent--light", `var(--${COLOR}--light)`);
+          node.style.setProperty("--accent--dark", `var(--${COLOR}--dark)`);
         });
 
-        /*-------------------- Spring --------------------*/
-        let spring = {
-          scale: 1,
-        };
-
-        const clicking = {
-          down: () => {
-            TweenMax.to(spring, 0.7, {
-              scale: 0.7,
-              ease: Power3.easeOut,
+        // EYE MOVEMENT
+        function debounce(func, timeout = 10) {
+          let timer;
+          return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+              func.apply(this, args);
+            }, timeout);
+          };
+        }
+        document.addEventListener(
+          "mousemove",
+          debounce((e) => {
+            /* Based on this wonderful pen: https://codepen.io/rebelchris/pen/PoNWYNY */
+            const eyes = [...document.getElementsByClassName("pupil")];
+            eyes.forEach((eye, i) => {
+              let mouseX =
+                i % 2
+                  ? eye.getBoundingClientRect().left
+                  : eye.getBoundingClientRect().right;
+              let mouseY = eye.getBoundingClientRect().top;
+              let radianDegrees = Math.atan2(
+                e.pageX - mouseX,
+                e.pageY - mouseY
+              );
+              let rotationDegrees = radianDegrees * (180 / Math.PI) * -1 + 180;
+              eye.style.transform = `rotate(${rotationDegrees}deg)`;
             });
-          },
-          up: () => {
-            TweenMax.to(spring, 0.9, {
-              scale: 1,
-              ease: Elastic.easeOut,
-            });
-          },
-        };
-
-        ["mousedown", "touchstart"].forEach((event) => {
-          window.addEventListener(event, clicking.down);
-        });
-        ["mouseup", "touchend"].forEach((event) => {
-          window.addEventListener(event, clicking.up);
-        });
-
-        /*-------------------- Resize --------------------*/
-        const onResize = () => {
-          canvas.style.width = "";
-          canvas.style.height = "";
-          width = canvas.offsetWidth;
-          height = canvas.offsetHeight;
-          camera.aspect = width / height;
-          camera.updateProjectionMatrix();
-          maxDist = distance(mouse, { x: width / 2, y: height / 2 });
-          renderer.setSize(width, height);
-        };
-        let resizeTm;
-        window.addEventListener("resize", function () {
-          resizeTm = clearTimeout(resizeTm);
-          resizeTm = setTimeout(onResize, 200);
-        });
-
-        /*-------------------- Noise --------------------*/
-        let dist = new THREE.Vector2(0, 0);
-        let maxDist = distance(mouse, { x: width / 2, y: height / 2 });
-        const updateVertices = (time) => {
-          dist = distance(mouse, { x: width / 2, y: height / 2 });
-          dist /= maxDist;
-          dist = map(dist, 1, 0, 0, 1);
-          for (let i = 0; i < bubbleGeometry.vertices.length; i++) {
-            let vector = bubbleGeometry.vertices[i];
-            vector.copy(vector.original);
-            let perlin = noise.simplex3(
-              vector.x * 0.006 + time * 0.0005,
-              vector.y * 0.006 + time * 0.0005,
-              vector.z * 0.006
-            );
-
-            let ratio = perlin * 0.3 * (dist + 0.1) + 0.8;
-            vector.multiplyScalar(ratio);
-          }
-          bubbleGeometry.verticesNeedUpdate = true;
-        };
-
-        /*-------------------- Animate --------------------*/
-        const render = (a) => {
-          requestAnimationFrame(render);
-          bubble.rotation.y = -4 + map(mouse.x, 0, width, 0, 4);
-          bubble.rotation.z = 4 + map(mouse.y, 0, height, 0, -4);
-          bubble.scale.set(spring.scale, spring.scale, spring.scale);
-          updateVertices(a);
-          renderer.clear();
-          renderer.render(scene, camera);
-        };
-        requestAnimationFrame(render);
-        renderer.render(scene, camera);
+          })
+        );
       };
     </script>
   </body>
