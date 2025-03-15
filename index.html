@@ -67,8 +67,6 @@
     </main>
     <script nonce="7ca12303b39">
       document.body.onload = () => {
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion)");
-
         function randomNumber(limit) {
           return Math.floor(Math.random() * limit);
         }
@@ -180,7 +178,7 @@
             }, timeout);
           };
         }
-        if (!reduceMotion) {
+        if (!window.matchMedia("(prefers-reduced-motion)")) {
           document.addEventListener(
             "mousemove",
             debounce((e) => {

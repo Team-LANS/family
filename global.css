@@ -121,9 +121,9 @@ h1 {
   width: 33%;
   border-radius: 50%;
 
-  background: white;
-  border: solid 4px black;
-  box-shadow: 3px 5px white;
+  background: #fff;
+  border: solid 4px #000;
+  box-shadow: 3px 5px #fff;
 }
 
 .eye:first-child {
