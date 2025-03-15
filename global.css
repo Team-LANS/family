@@ -138,6 +138,8 @@ h1 {
   position: absolute;
   aspect-ratio: 1;
   width: 100%;
+
+  transition: transform linear 100ms;
 }
 
 .pupil::after {
