@@ -67,6 +67,8 @@
     </main>
     <script nonce="7ca12303b39">
       document.body.onload = () => {
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion)");
+
         function randomNumber(limit) {
           return Math.floor(Math.random() * limit);
         }
@@ -135,6 +137,11 @@
           const eyes = [...node.children];
           eyes.forEach((eye) => {
             eye.style.setProperty("transform", `rotate(-${ROTATION[anchor]})`);
+
+            eye.children[0].style.setProperty(
+              "transform",
+              `rotate(${ROTATION[anchor]})`
+            );
           });
 
           // SHAPE TODO
@@ -173,26 +180,29 @@
             }, timeout);
           };
         }
-        document.addEventListener(
-          "mousemove",
-          debounce((e) => {
-            /* Based on this wonderful pen: https://codepen.io/rebelchris/pen/PoNWYNY */
-            const eyes = [...document.getElementsByClassName("pupil")];
-            eyes.forEach((eye, i) => {
-              let mouseX =
-                i % 2
-                  ? eye.getBoundingClientRect().left
-                  : eye.getBoundingClientRect().right;
-              let mouseY = eye.getBoundingClientRect().top;
-              let radianDegrees = Math.atan2(
-                e.pageX - mouseX,
-                e.pageY - mouseY
-              );
-              let rotationDegrees = radianDegrees * (180 / Math.PI) * -1 + 180;
-              eye.style.transform = `rotate(${rotationDegrees}deg)`;
-            });
-          })
-        );
+        if (!reduceMotion) {
+          document.addEventListener(
+            "mousemove",
+            debounce((e) => {
+              /* Based on this wonderful pen: https://codepen.io/rebelchris/pen/PoNWYNY */
+              const eyes = [...document.getElementsByClassName("pupil")];
+              eyes.forEach((eye, i) => {
+                let mouseX =
+                  i % 2
+                    ? eye.getBoundingClientRect().left
+                    : eye.getBoundingClientRect().right;
+                let mouseY = eye.getBoundingClientRect().top;
+                let radianDegrees = Math.atan2(
+                  e.pageX - mouseX,
+                  e.pageY - mouseY
+                );
+                let rotationDegrees =
+                  radianDegrees * (180 / Math.PI) * -1 + 180;
+                eye.style.transform = `rotate(${rotationDegrees}deg)`;
+              });
+            })
+          );
+        }
       };
     </script>
   </body>
