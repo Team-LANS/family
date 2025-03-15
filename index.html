@@ -104,14 +104,23 @@
             const anchor = randomItem(ANCHORS);
             const [direction, sign] = DIRECTION[anchor];
             const alignment = randomItem(ALIGNMENTS[direction]);
-            const position = anchor;
+            const position = `${anchor} ${alignment}`;
 
             if (!filledPositions.has(position)) {
               positionFound = true;
-              filledPositions.add(position);
+              ALIGNMENTS[direction].forEach((entry) => {
+                filledPositions.add(`${anchor} ${entry}`);
+              });
+              const percent = randomNumber(40);
+
+              if (percent < 20) {
+                filledPositions.add(`${alignment} ${anchor}`);
+              }
+
               positionData = {
                 alignment,
                 anchor,
+                percent,
                 translate: `translate${direction}(${42 * sign}%)`,
               };
             }
@@ -124,9 +133,10 @@
         const A = document.getElementById("a");
         [H, L, A].forEach((node) => {
           // POSITION
-          const { alignment, anchor, translate } = findAnEmptyPosition();
+          const { alignment, anchor, percent, translate } =
+            findAnEmptyPosition();
           node.style.setProperty(anchor, 0);
-          node.style.setProperty(alignment, `${randomNumber(40)}%`);
+          node.style.setProperty(alignment, `${percent}%`);
           node.style.setProperty(
             "transform",
             `${translate} rotate(${ROTATION[anchor]})`
