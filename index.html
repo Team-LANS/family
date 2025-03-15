@@ -138,9 +138,24 @@
           });
 
           // SHAPE TODO
+          const offset = randomNumber(20);
+          const direction = randomNumber(2);
+
+          const shape = [
+            [50, direction],
+            [50, !direction],
+            [50, !direction],
+            [50, direction],
+          ]
+            .map(([base, subtract], i) => {
+              let customOffset = offset + randomNumber(9) - 4;
+              let result = subtract ? base - customOffset : base + customOffset;
+              return Math.max(30, Math.min(70, result));
+            })
+            .join("% ");
           node.style.setProperty(
             "border-radius",
-            "49% 51% 48% 52% / 57% 44% 56% 43%"
+            `${shape}% / 50% 50% 50% 50%`
           );
 
           // THEME
