@@ -188,7 +188,7 @@
             }, timeout);
           };
         }
-        if (!window.matchMedia("(prefers-reduced-motion)")) {
+        if (!window.matchMedia("(prefers-reduced-motion)").matches) {
           document.addEventListener(
             "mousemove",
             debounce((e) => {
